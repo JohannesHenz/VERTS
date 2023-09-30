@@ -5,13 +5,11 @@
 #include <unistd.h>
 #include <string.h>
 
-/* Verbose Flag wird global gesetzt, damit der komplette Code es sehen kann. */
-//unsigned short opt_verbose = 0;
 
 /* Hilfsfunktion */
 void print_usage(char *programm_name)
 {
-    printf("Usage: %s [-h] [-v] [-f dateiname]\n\n", programm_name);
+    printf("Usage: %s [-R] [-i] [dateiname]\n\n", programm_name);
     return;
 }
 
@@ -19,14 +17,16 @@ void print_usage(char *programm_name)
 int main(int argc, char *argv[])
 {
     int c;
-    char *dateiname;
+    char *current_dateiname;
+    char *alle_dateinamen[argc];
     char *programm_name;
     unsigned short Counter_Option_R = 0;
     unsigned short Counter_Option_i = 0;
 
+
     programm_name = argv[0];
 
-    while ((c = getopt(argc, argv, "hvf:")) != EOF)
+    while ((c = getopt(argc, argv, "Rif:")) != EOF)
     {
         switch (c)
         {
@@ -37,13 +37,12 @@ int main(int argc, char *argv[])
             /* Das break ist nach exit() eigentlich nicht mehr notwendig. */
             break;
         case 'i': //case insensitive search 
-            Counter_Option_R++;
-            print_usage(programm_name);
-            exit(0);
+            Counter_Option_i++;
+           // print_usage(programm_name);
             break;
         case 'R': //search recursivly
-            Counter_Option_i++;
-           // opt_verbose = 1;
+            Counter_Option_R++;
+            //print_usage(programm_name);
             break;
         default:
             /* assert() dient nur zu Debugzwecken und sollte nur dort eingesetzt sein,
@@ -59,20 +58,20 @@ int main(int argc, char *argv[])
 
     if (optind < argc)
     {
-        printf("ARGV Elemente ohne Optionen: ");
+        printf("Target Files: ");
         while (optind < argc)
         {
-            printf("%s ", argv[optind++]);
+            current_dateiname = argv[optind];
+            printf("%s", current_dateiname);
+           alle_dateinamen[optind] = current_dateiname;
+            optind++;
         }
         printf("\n");
+        
     }
+   
 
-    /* if ( optind >= argc ) {
-        fprintf(stderr, "Fehler: Es wurden Optionen, die Argumente erwarten, ohne Argument angegeben.\n");
-        exit(EXIT_FAILURE);
-    } */
-
-    printf("Es wurden %u Argumente angeben.\n", argc);
+    //printf("Es wurden %u Argumente angeben.\n", argc);
     printf("Recursive Search Modus ist");
     if (Counter_Option_R == 0)
     {
